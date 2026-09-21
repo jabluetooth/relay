@@ -3,7 +3,7 @@ import { gmailClient } from "@/lib/google/client";
 import { isRateLimitError, getRetryAfterMs, getGoogleApiErrorStatus } from "@/lib/google/api-errors";
 import { stripHtml } from "@/lib/text";
 import type { IngestAdapter, IngestedChunk } from "@/lib/ingest/types";
-import type { gmail_v1 } from "googleapis";
+import type { gmail_v1 } from "@googleapis/gmail";
 
 // M2 scope (PRD §9, FR-6, FR-11). Gmail is the highest-risk untrusted-content
 // surface this project ingests (FR-14) — real inbox content, someone else's
@@ -34,10 +34,22 @@ export interface GmailScope {
   before?: string;
 }
 
+// These values are spliced into a Gmail search string ("after:2026/01/01"), so
+// they are checked against the exact shape Gmail expects instead of being
+// trusted: a free-form string could otherwise smuggle in extra search
+// operators (from:, has:, -label:) and quietly widen or redirect what gets
+// indexed from the mailbox.
+const GMAIL_DATE = /^\d{4}\/\d{2}\/\d{2}$/;
+const GMAIL_LABEL_ID = /^[A-Za-z0-9_-]{1,100}$/;
+
 export function validateGmailScope(config: Record<string, unknown> | undefined): GmailScope {
-  const labelId = typeof config?.labelId === "string" ? config.labelId : undefined;
-  const after = typeof config?.after === "string" ? config.after : undefined;
-  const before = typeof config?.before === "string" ? config.before : undefined;
+  const labelId = typeof config?.labelId === "string" && config.labelId ? config.labelId : undefined;
+  const after = typeof config?.after === "string" && config.after ? config.after : undefined;
+  const before = typeof config?.before === "string" && config.before ? config.before : undefined;
+
+  if (labelId && !GMAIL_LABEL_ID.test(labelId)) throw new Error("Invalid Gmail label id.");
+  if (after && !GMAIL_DATE.test(after)) throw new Error("Invalid \"after\" date; expected YYYY/MM/DD.");
+  if (before && !GMAIL_DATE.test(before)) throw new Error("Invalid \"before\" date; expected YYYY/MM/DD.");
 
   if (!labelId && !after && !before) {
     throw new Error(

@@ -5,6 +5,11 @@ import { randomBytes, createHash, createHmac, createCipheriv, createDecipheriv, 
 // Insight's AES-256-GCM token encryption (see resume-tailor project data).
 
 const ALGO = "aes-256-gcm";
+// Pinned explicitly. Node accepts GCM tags shorter than 16 bytes unless told
+// otherwise, and a truncated tag is much easier to forge, so anything but the
+// full 128-bit tag is rejected rather than trusted.
+const TAG_BYTES = 16;
+const IV_BYTES = 12;
 
 function getEncryptionKey(): Buffer {
   const hex = process.env.RELAY_ENCRYPTION_KEY;
@@ -19,8 +24,8 @@ function getEncryptionKey(): Buffer {
 /** Encrypts a refresh token for storage. Format: iv:authTag:ciphertext, all base64. */
 export function encryptToken(plaintext: string): string {
   const key = getEncryptionKey();
-  const iv = randomBytes(12); // 96-bit nonce, standard for GCM
-  const cipher = createCipheriv(ALGO, key, iv);
+  const iv = randomBytes(IV_BYTES); // 96-bit nonce, standard for GCM
+  const cipher = createCipheriv(ALGO, key, iv, { authTagLength: TAG_BYTES });
   const ciphertext = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
   const authTag = cipher.getAuthTag();
   return [iv.toString("base64"), authTag.toString("base64"), ciphertext.toString("base64")].join(":");
@@ -30,13 +35,21 @@ export function decryptToken(stored: string): string {
   const key = getEncryptionKey();
   const [ivB64, tagB64, dataB64] = stored.split(":");
   if (!ivB64 || !tagB64 || !dataB64) throw new Error("Malformed encrypted token");
-  const decipher = createDecipheriv(ALGO, key, Buffer.from(ivB64, "base64"));
-  decipher.setAuthTag(Buffer.from(tagB64, "base64"));
+  const iv = Buffer.from(ivB64, "base64");
+  const tag = Buffer.from(tagB64, "base64");
+  if (iv.length !== IV_BYTES || tag.length !== TAG_BYTES) throw new Error("Malformed encrypted token");
+  const decipher = createDecipheriv(ALGO, key, iv, { authTagLength: TAG_BYTES });
+  decipher.setAuthTag(tag);
   const plaintext = Buffer.concat([
     decipher.update(Buffer.from(dataB64, "base64")),
     decipher.final(),
   ]);
   return plaintext.toString("utf8");
+}
+
+/** Constant-time string comparison (hashes first so length differences don't leak either). */
+export function safeEqual(a: string, b: string): boolean {
+  return timingSafeEqual(createHash("sha256").update(a).digest(), createHash("sha256").update(b).digest());
 }
 
 // --- PKCE (RFC 7636), for the hand-rolled authorization-code flow (FR-1) ---
@@ -65,6 +78,8 @@ interface StatePayload {
 function getStateSecret(): string {
   const secret = process.env.RELAY_STATE_SECRET;
   if (!secret) throw new Error("RELAY_STATE_SECRET is not set — see .env.example");
+  // The state is only as unforgeable as this secret is unguessable.
+  if (secret.length < 32) throw new Error("RELAY_STATE_SECRET must be at least 32 characters — generate a random one, see .env.example");
   return secret;
 }
 

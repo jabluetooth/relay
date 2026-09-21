@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import { gmailClient } from "@/lib/google/client";
+import { isUuid } from "@/lib/api";
 
 // Lets the connections UI offer a real label picker instead of asking a
 // user to type a raw label ID by hand (custom labels' IDs look like
@@ -8,8 +9,8 @@ import { gmailClient } from "@/lib/google/client";
 // on why the ID, not the name, is what scope actually needs).
 export async function GET(req: NextRequest) {
   const connectionId = req.nextUrl.searchParams.get("connectionId");
-  if (!connectionId) {
-    return NextResponse.json({ error: "connectionId query param is required" }, { status: 400 });
+  if (!isUuid(connectionId)) {
+    return NextResponse.json({ error: "A valid connectionId query param is required" }, { status: 400 });
   }
 
   const accessToken = await getValidAccessToken(connectionId);

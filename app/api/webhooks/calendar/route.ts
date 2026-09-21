@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq, and } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { qstash, appBaseUrl } from "@/lib/qstash";
+import { safeEqual } from "@/lib/crypto";
 
 // Google's push-notification receiver for Calendar (FR-10) — same shape as
 // app/api/webhooks/drive/route.ts (Calendar's `events.watch` channel
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     .where(and(eq(schema.webhookChannels.channelId, channelId), eq(schema.webhookChannels.surface, "calendar")))
     .limit(1);
 
-  if (!channel || channel.channelToken !== channelToken) {
+  if (!channel || !safeEqual(channel.channelToken, channelToken)) {
     return NextResponse.json({ error: "Unknown or unverified channel" }, { status: 403 });
   }
 

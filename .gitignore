@@ -44,3 +44,7 @@ next-env.d.ts
 /.clinerules
 /.cursorrules
 /.windsurfrules
+
+# built npm package (npm run build:package)
+/dist
+*.tgz

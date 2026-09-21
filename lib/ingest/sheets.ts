@@ -1,6 +1,7 @@
 import { driveClient, sheetsClient } from "@/lib/google/client";
 import type { IngestAdapter, IngestedChunk } from "@/lib/ingest/types";
-import type { sheets_v4, drive_v3 } from "googleapis";
+import type { sheets_v4 } from "@googleapis/sheets";
+import type { drive_v3 } from "@googleapis/drive";
 
 // M2 scope (PRD §9, FR-8, FR-12). Unlike Gmail, Sheets needs no FR-6-style
 // opt-in scope — backfill indexes every spreadsheet found in Drive, the

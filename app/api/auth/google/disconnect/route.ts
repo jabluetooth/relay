@@ -5,15 +5,14 @@ import { db, schema } from "@/lib/db";
 import { decryptToken } from "@/lib/crypto";
 import { revokeToken } from "@/lib/google/oauth";
 import { invalidateCachedToken } from "@/lib/google/tokens";
+import { parseBody } from "@/lib/api";
 
 const bodySchema = z.object({ connectionId: z.string().uuid() });
 
 export async function POST(req: NextRequest) {
-  const parsed = bodySchema.safeParse(await req.json());
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  }
-  const { connectionId } = parsed.data;
+  const body = await parseBody(req, bodySchema);
+  if (body.error) return body.error;
+  const { connectionId } = body.data;
 
   const [connection] = await db
     .select()

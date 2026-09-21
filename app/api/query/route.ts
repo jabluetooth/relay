@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db, schema } from "@/lib/db";
 import { getOrCreateOwnerUser } from "@/lib/db/owner";
 import { answerQuery } from "@/lib/rag/pipeline";
+import { parseBody } from "@/lib/api";
 
 const bodySchema = z.object({
   sessionId: z.string().uuid().optional(),
@@ -11,12 +12,10 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const parsed = bodySchema.safeParse(await req.json());
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  }
-  const { message } = parsed.data;
-  let { sessionId } = parsed.data;
+  const body = await parseBody(req, bodySchema);
+  if (body.error) return body.error;
+  const { message } = body.data;
+  let { sessionId } = body.data;
 
   if (sessionId) {
     const [session] = await db

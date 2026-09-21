@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db, schema } from "@/lib/db";
 import { enqueueBackfill } from "@/lib/backfill";
 import { validateGmailScope } from "@/lib/ingest/gmail";
+import { parseBody } from "@/lib/api";
 
 const bodySchema = z.object({
   connectionId: z.string().uuid(),
@@ -22,12 +23,10 @@ const bodySchema = z.object({
 // failure on its own; this route's job now is just validating, resolving
 // scope, and enqueueing.
 export async function POST(req: NextRequest) {
-  const parsed = bodySchema.safeParse(await req.json());
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  }
-  const { connectionId, surface } = parsed.data;
-  let config = parsed.data.config;
+  const body = await parseBody(req, bodySchema);
+  if (body.error) return body.error;
+  const { connectionId, surface } = body.data;
+  let config = body.data.config;
 
   const [connection] = await db
     .select({ id: schema.googleConnections.id })

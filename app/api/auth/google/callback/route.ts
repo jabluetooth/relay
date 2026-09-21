@@ -29,6 +29,21 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: (err as Error).message }, { status: 400 });
   }
 
+  // Anything that goes wrong from here (Google rejecting the code, the
+  // database being down) ends on the Connections page with a generic message.
+  // The detail goes to the server log only; it can contain Google's raw
+  // error text and must not be reflected to the browser.
+  try {
+    return await completeConnection(req, code, codeVerifier, surfaces);
+  } catch (err) {
+    console.error("Google connect failed:", err);
+    const res = NextResponse.redirect(new URL("/connections?error=connect_failed", req.url));
+    res.cookies.delete("relay_pkce_verifier");
+    return res;
+  }
+}
+
+async function completeConnection(req: NextRequest, code: string, codeVerifier: string, surfaces: string[]) {
   const tokens = await exchangeCodeForTokens(code, codeVerifier);
   const email = await fetchAccountEmail(tokens.access_token);
   const user = await getOrCreateOwnerUser();

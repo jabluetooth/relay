@@ -192,10 +192,12 @@ export default function SecurityPage() {
                 <div className="rounded border border-danger/50 border-l-4 border-l-danger bg-danger/[0.06] p-5 sm:p-6">
                   <p className="font-mono text-xs uppercase tracking-[0.1em] text-danger">no login</p>
                   <p className="mt-3 max-w-[64ch] leading-relaxed">
-                    Relay has no authentication of its own. Anyone who can reach its address can ask questions, read
-                    your query log and use the Google account you connected. Run it on localhost, or put it behind a
-                    VPN, an authenticating reverse proxy or a zero-trust gateway. Do not expose it to the public
-                    internet as it is.
+                    Relay has no login. It is built to run on your own computer, so it listens only on 127.0.0.1 and
+                    refuses any request that is not addressed to localhost or that comes from another website, which
+                    is what stops other machines on your network and pages in your browser from reaching it. It does
+                    not separate users on the same computer: anyone who can already use your account on that machine
+                    can use Relay. Do not expose it to the internet. If you must, put it behind a VPN or an
+                    authenticating reverse proxy and allow its hostname with RELAY_ALLOWED_HOSTS.
                   </p>
                 </div>
               </Rise>
@@ -204,7 +206,8 @@ export default function SecurityPage() {
                   ["One owner", "There is a single implicit user. Relay does not separate one person's data from another's, because it was never built for more than one."],
                   ["Testing-mode OAuth", "The Google app stays in Testing: an unverified-app warning at first connect, a cap of 100 test users, and, per Google's documentation, refresh tokens that expire after seven days, so you reconnect weekly."],
                   ["Third-party model calls", "Passages go to Hugging Face and Groq, as listed above. Relay cannot make those services forget them."],
-                  ["Prompt-level defense", "Resistance to injected instructions is verified by tests, not enforced by construction."],
+                  ["Prompt-level defense", "Resistance to injected instructions is verified by tests, not enforced by construction. As a second layer, answers can never load images and the browser is told to talk only to Relay itself, so a hostile email cannot make an answer send your data anywhere."],
+                  ["Data at rest", "Refresh tokens are encrypted. The indexed text of your documents and emails, your questions and the answers are stored unencrypted in your Postgres and Qdrant, so use disk encryption (BitLocker, FileVault) and keep both databases bound to 127.0.0.1."],
                 ].map(([k, v]) => (
                   <div key={k} className="grid gap-2 py-4 sm:grid-cols-[12rem_1fr] sm:gap-6">
                     <dt className="font-mono text-xs uppercase tracking-[0.08em] text-muted">{k}</dt>

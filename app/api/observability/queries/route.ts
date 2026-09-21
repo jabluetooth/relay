@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { and, desc, gte, ilike, lte } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
+import { escapeLike } from "@/lib/api";
 
 // Backs the Recent Queries search/date-filter UI (separate from the main
 // GET /api/observability payload) — a real ILIKE + date-range query against
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
   const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(Math.floor(limitParam), MAX_LIMIT) : DEFAULT_LIMIT;
 
   const conditions = [];
-  if (q) conditions.push(ilike(schema.queryLogs.query, `%${q}%`));
+  if (q) conditions.push(ilike(schema.queryLogs.query, `%${escapeLike(q)}%`));
   if (from) conditions.push(gte(schema.queryLogs.createdAt, new Date(`${from}T00:00:00.000Z`)));
   if (to) conditions.push(lte(schema.queryLogs.createdAt, new Date(`${to}T23:59:59.999Z`)));
 

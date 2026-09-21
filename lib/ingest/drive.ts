@@ -2,7 +2,8 @@ import { createHash } from "crypto";
 import { driveClient, docsClient } from "@/lib/google/client";
 import { extractPdfText } from "@/lib/ingest/pdf";
 import type { IngestAdapter, IngestedChunk } from "@/lib/ingest/types";
-import type { docs_v1, drive_v3 } from "googleapis";
+import type { docs_v1 } from "@googleapis/docs";
+import type { drive_v3 } from "@googleapis/drive";
 
 // M1 scope (PRD §9): Google Docs and PDF content, backfill + incremental
 // sync via Drive's changes API.

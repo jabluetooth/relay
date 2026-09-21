@@ -1,12 +1,45 @@
 {
-  "name": "relay",
-  "version": "0.1.0",
-  "private": true,
+  "name": "relay-workspace",
+  "version": "1.0.0",
+  "description": "Self-hosted assistant that answers questions from your own Google Workspace, with a link to the exact passage, or refuses.",
+  "keywords": [
+    "rag",
+    "google-workspace",
+    "gmail",
+    "google-drive",
+    "self-hosted",
+    "local-first",
+    "qdrant",
+    "assistant"
+  ],
+  "homepage": "https://relayby.filheinzrelatorre.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jabluetooth/relay.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jabluetooth/relay/issues"
+  },
+  "author": "Fil Heinz O. Re La Torre",
   "license": "MIT",
+  "bin": {
+    "relay": "bin/relay.mjs",
+    "relay-workspace": "bin/relay.mjs"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "docker/",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 127.0.0.1",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -18,26 +51,24 @@
     "eval:cleanup-adversarial": "tsx tests/eval/cleanup-adversarial.mts",
     "eval:report": "tsx tests/eval/report.mts",
     "eval": "npm run eval:ground-truth && npm run eval:seed-adversarial && npm run eval:adversarial && npm run eval:report",
-    "qstash:register-schedule": "tsx scripts/register-qstash-schedules.mts"
+    "qstash:register-schedule": "tsx scripts/register-qstash-schedules.mts",
+    "build:package": "node scripts/build-package.mjs",
+    "test:package": "node scripts/test-package.mjs",
+    "prepublishOnly": "npm run build:package",
+    "test": "tsx --test tests/unit/*.test.mts"
   },
   "dependencies": {
-    "@qdrant/js-client-rest": "^1.19.0",
     "@upstash/qstash": "^2.11.3",
     "drizzle-orm": "^0.45.2",
-    "framer-motion": "^13.4.0",
-    "googleapis": "^181.0.0",
-    "groq-sdk": "^1.6.0",
-    "lucide-react": "^1.47.0",
-    "next": "16.3.5",
-    "pdfjs-dist": "^6.3.289",
-    "postgres": "^3.4.9",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-markdown": "^10.1.0",
-    "recharts": "^3.10.1",
-    "zod": "^4.6.5"
+    "postgres": "^3.4.9"
   },
   "devDependencies": {
+    "@googleapis/calendar": "^20.0.0",
+    "@googleapis/docs": "^14.0.0",
+    "@googleapis/drive": "^26.0.0",
+    "@googleapis/gmail": "^22.0.0",
+    "@googleapis/sheets": "^18.0.0",
+    "@qdrant/js-client-rest": "^1.19.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -45,8 +76,19 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
+    "framer-motion": "^13.4.0",
+    "google-auth-library": "^11.1.0",
+    "groq-sdk": "^1.6.0",
+    "lucide-react": "^1.47.0",
+    "next": "16.3.5",
+    "pdfjs-dist": "^6.3.289",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0",
+    "recharts": "^3.10.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zod": "^4.6.5"
   }
 }

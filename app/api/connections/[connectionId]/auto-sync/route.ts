@@ -7,6 +7,7 @@ import { driveClient, calendarClient } from "@/lib/google/client";
 import { SURFACE_SCOPES } from "@/lib/google/scopes";
 import { enqueueBackfill } from "@/lib/backfill";
 import type { Surface } from "@/lib/ingest/types";
+import { isUuid, parseBody } from "@/lib/api";
 
 const bodySchema = z.object({ enabled: z.boolean() });
 
@@ -23,11 +24,10 @@ const bodySchema = z.object({ enabled: z.boolean() });
 // its own to stop; it simply stops getting triggered once Drive's does.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ connectionId: string }> }) {
   const { connectionId } = await params;
-  const parsed = bodySchema.safeParse(await req.json());
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  }
-  const { enabled } = parsed.data;
+  if (!isUuid(connectionId)) return NextResponse.json({ error: "Invalid connection id." }, { status: 400 });
+  const body = await parseBody(req, bodySchema);
+  if (body.error) return body.error;
+  const { enabled } = body.data;
 
   const [connection] = await db
     .select()

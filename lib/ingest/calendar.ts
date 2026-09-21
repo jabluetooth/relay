@@ -2,7 +2,7 @@ import { calendarClient } from "@/lib/google/client";
 import { getGoogleApiErrorStatus } from "@/lib/google/api-errors";
 import { stripHtml } from "@/lib/text";
 import type { IngestAdapter, IngestedChunk } from "@/lib/ingest/types";
-import type { calendar_v3 } from "googleapis";
+import type { calendar_v3 } from "@googleapis/calendar";
 
 // M2 scope (PRD §9, FR-7, FR-10). Unlike Gmail, Calendar isn't called out
 // in PRD §8 as needing FR-6-style opt-in scoping — it defaults to the
