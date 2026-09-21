@@ -1,0 +1,190 @@
+[
+  {
+    "id": "gt-01",
+    "surface": "drive",
+    "question": "What's the central failure mode in raster-to-vector conversion for as-built MEP and low-voltage drawings?",
+    "expectedDocTitle": "Automating As-Built PDF to CAD",
+    "expectedKeywords": ["bag of lines", "disjoint primitives"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-02",
+    "surface": "drive",
+    "question": "How many concurrent users is the Autodesk chatbot architecture on AWS designed to support?",
+    "expectedDocTitle": "Automating Autodesk with Chatbot",
+    "expectedKeywords": ["50"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-03",
+    "surface": "drive",
+    "question": "Which wireless gaming headset models under 1500 pesos offer 2.4GHz dongle connectivity?",
+    "expectedDocTitle": "Budget Wired/Dongle Headphones Under 1500",
+    "expectedKeywords": ["Attack Shark", "Nubwo"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-04",
+    "surface": "drive",
+    "question": "What tech stack was proposed for the Gamma-slides-competitor app in the January 2026 PRD?",
+    "expectedDocTitle": "PRD & Prompts for YT - January 2026",
+    "expectedKeywords": ["Supabase", "Next.js", "Gemini"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-05",
+    "surface": "drive",
+    "question": "What PDF feature introduced in version 1.4 forces older RIPs to do page-wise flattening?",
+    "expectedDocTitle": "Raster PDF to Vector Pipeline Improvement",
+    "expectedKeywords": ["transparency"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-06",
+    "surface": "drive",
+    "question": "What hardware standard is the Model Context Protocol compared to in the CAD automation tech stack report?",
+    "expectedDocTitle": "Tech Stack for CAD Automation",
+    "expectedKeywords": ["USB-C"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-07",
+    "surface": "drive",
+    "question": "What older, deterministic modeling paradigm does Agentic Modeling replace, per the CAD automation tech stack report?",
+    "expectedDocTitle": "Tech Stack for CAD Automation",
+    "expectedKeywords": ["Parametric"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-08",
+    "surface": "drive",
+    "question": "What vector graphic formats does converting as-built PDFs target for CAD workflows?",
+    "expectedDocTitle": "Automating As-Built PDF to CAD",
+    "expectedKeywords": ["DXF", "DWG"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-09",
+    "surface": "gmail",
+    "question": "What is my IONOS customer ID?",
+    "expectedDocTitle": null,
+    "expectedKeywords": ["315145906"],
+    "shouldRefuse": false,
+    "note": "Same customer ID repeats across several real IONOS invoice emails in scope — expectedDocTitle is deliberately null since any one of them correctly answers this, not a single canonical source."
+  },
+  {
+    "id": "gt-10",
+    "surface": "gmail",
+    "question": "What is my Vercel login code and where was the login attempt made from?",
+    "expectedDocTitle": "142346 is your Vercel log in code",
+    "expectedKeywords": ["142346", "Manila"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-11",
+    "surface": "gmail",
+    "question": "Per Google Cloud's credential security email, after how many days of inactivity should a dormant service account key be decommissioned?",
+    "expectedDocTitle": "[Action Advised] Review Google Cloud credential security best practices",
+    "expectedKeywords": ["30 days"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-16",
+    "surface": "gmail",
+    "question": "What is my SEEK Pass verification code?",
+    "expectedDocTitle": "075988 is your code for SEEK Pass",
+    "expectedKeywords": ["075988"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-17",
+    "surface": "gmail",
+    "question": "Which billing account does my past-due payment notice reference?",
+    "expectedDocTitle": "Action required: your billing account 01BF8F-19BD04-E4BED7 is past due or has invalid payment information.",
+    "expectedKeywords": ["01BF8F-19BD04-E4BED7"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-12",
+    "surface": "calendar",
+    "question": "What role is my Pivotly Initial Screening interview for, and when is it scheduled?",
+    "expectedDocTitle": "Fil Heinz O. Re La Torre - Initial Screening | Pivotly",
+    "expectedKeywords": ["Python Developer", "September 7"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-13",
+    "surface": "calendar",
+    "question": "Who is interviewing me for the Pivotly screening?",
+    "expectedDocTitle": "Fil Heinz O. Re La Torre - Initial Screening | Pivotly",
+    "expectedKeywords": ["Keith Rufo"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-14",
+    "surface": "sheets",
+    "question": "What fields does the Pipeline Runs spreadsheet track for each run?",
+    "expectedDocTitle": null,
+    "expectedKeywords": ["run_id", "status"],
+    "shouldRefuse": false,
+    "note": "Answer legitimately spans several rows (each its own document per FR-8's per-row chunking) — expectedDocTitle null is deliberate, not a gap."
+  },
+  {
+    "id": "gt-15",
+    "surface": "sheets",
+    "question": "According to the Breen Design AWS Server Info & Software Report, should the HP SmartTracker AddOn be retained or uninstalled?",
+    "expectedDocTitle": null,
+    "expectedKeywords": ["Retain"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-18",
+    "surface": "sheets",
+    "question": "In the Start research spreadsheet, what does the acad_audit_layers tool's deterministic action do?",
+    "expectedDocTitle": null,
+    "expectedKeywords": ["layer state", "audit log"],
+    "shouldRefuse": false
+  },
+  {
+    "id": "gt-refuse-01",
+    "surface": null,
+    "question": "What's our Q3 revenue forecast?",
+    "expectedDocTitle": null,
+    "expectedKeywords": [],
+    "shouldRefuse": true
+  },
+  {
+    "id": "gt-refuse-02",
+    "surface": null,
+    "question": "What's the weather forecast for tomorrow?",
+    "expectedDocTitle": null,
+    "expectedKeywords": [],
+    "shouldRefuse": true
+  },
+  {
+    "id": "gt-refuse-03",
+    "surface": null,
+    "question": "Who won the most recent Super Bowl?",
+    "expectedDocTitle": null,
+    "expectedKeywords": [],
+    "shouldRefuse": true
+  },
+  {
+    "id": "gt-refuse-04",
+    "surface": "gmail",
+    "question": "What did my last email in the Sent folder say?",
+    "expectedDocTitle": null,
+    "expectedKeywords": [],
+    "shouldRefuse": true,
+    "note": "Updated once Gmail ingestion landed (M2) — the stale version of this case assumed Gmail wasn't ingested at all, which is no longer true. Real scope-boundary test instead: this connection's Gmail scope is labelId=INBOX only (FR-6), so Sent-folder content genuinely isn't indexed and should refuse cleanly, not error."
+  },
+  {
+    "id": "gt-refuse-05",
+    "surface": "calendar",
+    "question": "What was on my calendar in December 2020?",
+    "expectedDocTitle": null,
+    "expectedKeywords": [],
+    "shouldRefuse": true,
+    "note": "Real scope-boundary test: Calendar's backfill window defaults to -90/+180 days from now (lib/ingest/calendar.ts) — December 2020 is far outside it, so this should refuse cleanly, not error or hallucinate."
+  }
+]

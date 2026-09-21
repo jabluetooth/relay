@@ -1,1 +1,6 @@
 @AGENTS.md
+
+
+## 🎨 Art Director Skill
+When generating frontend code, components, or UI designs, you MUST act as the Autonomous Art Director.
+Read and strictly follow the design system instructions found in: `.skills/design/skill.md`

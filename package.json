@@ -6,21 +6,46 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "eval:ground-truth": "tsx tests/eval/run-eval.mts",
+    "eval:seed-adversarial": "tsx tests/eval/seed-adversarial.mts",
+    "eval:adversarial": "tsx tests/eval/run-adversarial.mts",
+    "eval:cleanup-adversarial": "tsx tests/eval/cleanup-adversarial.mts",
+    "eval:report": "tsx tests/eval/report.mts",
+    "eval": "npm run eval:ground-truth && npm run eval:seed-adversarial && npm run eval:adversarial && npm run eval:report",
+    "qstash:register-schedule": "tsx scripts/register-qstash-schedules.mts"
   },
   "dependencies": {
+    "@qdrant/js-client-rest": "^1.19.0",
+    "@upstash/qstash": "^2.11.3",
+    "drizzle-orm": "^0.45.2",
+    "framer-motion": "^13.4.0",
+    "googleapis": "^181.0.0",
+    "groq-sdk": "^1.6.0",
+    "lucide-react": "^1.47.0",
     "next": "16.3.5",
+    "pdfjs-dist": "^6.3.289",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0",
+    "recharts": "^3.10.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

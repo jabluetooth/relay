@@ -1,26 +1,117 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Warm Terminal — deliberately not the blue-tinted near-black + indigo
+     accent every AI-generated dark dashboard defaults to. Dark is the
+     primary, designed identity here (a real dev tool, not a light-first
+     B2B dashboard); light (below) is a secondary, functional fallback for
+     a light system preference, not a from-scratch second design.
+     Everything is warm (a hint of brown/red in the neutrals), and the
+     accent is a terracotta, not a violet. */
+  --background: #141210;
+  --surface: #1c1916;
+  --foreground: #f2ede7;
+  --muted: #948b81;
+  --border: #f2ede71a;
+
+  --accent: #d97757;
+  --accent-foreground: #141210;
+
+  --success: #4ade80;
+  --danger: #f87171;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #faf7f2;
+    --surface: #ffffff;
+    --foreground: #1c1712;
+    --muted: #7a6f63;
+    --border: #1c17121a;
+    --accent: #c2410c;
+    --accent-foreground: #faf7f2;
+    --success: #15803d;
+    --danger: #b91c1c;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* The default hairline colour. It has to live in the base layer: as a bare
+   unlayered `* { … }` rule it out-ranks every Tailwind utility, so
+   border-accent, border-danger, hover:border-accent/40 and
+   focus-within:border-accent silently did nothing. */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Geist Sans carries prose/UI labels; JetBrains Mono (below) is reserved
+     for data — ids, timestamps, counts, technical status — so the two
+     typefaces create real contrast instead of one face doing everything. */
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Film-grain layer for the public site — SVG feTurbulence at low opacity,
+   not the harsh digital static or blurred colour glows the design skill
+   lists as AI tells. Fixed + pointer-events:none, so it costs no layout. */
+.site-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+@media (prefers-color-scheme: light) {
+  .site-noise {
+    filter: invert(1);
+    opacity: 0.045;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
