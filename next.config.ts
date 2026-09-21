@@ -57,6 +57,9 @@ const nextConfig: NextConfig = {
   // build:package`), so people who install it never run a build or download
   // the ~700 MB of build tooling. Off for normal dev and for Vercel.
   output: process.env.RELAY_STANDALONE === "1" ? "standalone" : undefined,
+  // The package build writes to its own folder, so it never collides with a
+  // running `npm run dev` (which holds .next open and made the build fail).
+  distDir: process.env.RELAY_STANDALONE === "1" ? ".next-package" : ".next",
   // Pin the trace root to this project so a lockfile in some parent folder
   // can't change where the standalone server ends up.
   outputFileTracingRoot: path.join(process.cwd()),

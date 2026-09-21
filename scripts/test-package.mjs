@@ -14,7 +14,7 @@ const files = info.files.map((f) => f.path);
 const problems = [];
 const need = ["bin/relay.mjs", "docker/docker-compose.yml", "dist/app/server.js", "dist/migrations/0000_watery_gorilla_man.sql", "LICENSE", "README.md"];
 for (const f of need) if (!files.includes(f)) problems.push(`missing from package: ${f}`);
-if (!files.some((f) => f.startsWith("dist/app/.next/static/"))) problems.push("missing the built browser assets (dist/app/.next/static)");
+if (!files.some((f) => f.startsWith("dist/app/.next-package/static/"))) problems.push("missing the built browser assets (dist/app/.next/static)");
 if (!files.some((f) => f.includes("standard_fonts/"))) problems.push("missing PDF font files (Drive PDFs would fail to index)");
 if (!files.some((f) => /^dist\/migrations\/\d{4}_.*\.sql$/.test(f) && f !== "dist/migrations/0000_watery_gorilla_man.sql")) problems.push("only the first migration is packaged; the schema has grown since");
 

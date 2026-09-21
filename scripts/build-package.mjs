@@ -20,19 +20,20 @@ for (const k of ["NEXT_PUBLIC_SITE_ONLY", "VERCEL"]) {
   if (process.env[k]) throw new Error(`${k} is set in this shell. Unset it before building the package.`);
 }
 
-log("cleaning dist/ and .next/");
+const NEXT_DIR = ".next-package"; // must match distDir in next.config.ts
+log(`cleaning dist/ and ${NEXT_DIR}/`);
 fs.rmSync(dist, { recursive: true, force: true });
-fs.rmSync(path.join(root, ".next"), { recursive: true, force: true });
+fs.rmSync(path.join(root, NEXT_DIR), { recursive: true, force: true });
 
 log("next build (standalone)");
 run("npx", ["next", "build"], { RELAY_STANDALONE: "1" });
 
-const standalone = path.join(root, ".next", "standalone");
+const standalone = path.join(root, NEXT_DIR, "standalone");
 if (!fs.existsSync(path.join(standalone, "server.js"))) throw new Error("standalone server.js was not produced");
 
 log("assembling dist/app");
 fs.cpSync(standalone, path.join(dist, "app"), { recursive: true, dereference: true });
-fs.cpSync(path.join(root, ".next", "static"), path.join(dist, "app", ".next", "static"), { recursive: true });
+fs.cpSync(path.join(root, NEXT_DIR, "static"), path.join(dist, "app", NEXT_DIR, "static"), { recursive: true });
 if (fs.existsSync(path.join(root, "public"))) fs.cpSync(path.join(root, "public"), path.join(dist, "app", "public"), { recursive: true });
 fs.cpSync(path.join(root, "lib", "db", "migrations"), path.join(dist, "migrations"), { recursive: true });
 
@@ -57,7 +58,7 @@ const stripMaps = (d) => {
     }
   }
 };
-stripMaps(path.join(dist, "app", ".next"));
+stripMaps(path.join(dist, "app", NEXT_DIR));
 console.log(`  removed ${maps} source maps`);
 
 const mb = (dir) => {
