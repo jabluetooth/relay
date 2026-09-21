@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { REPO_URL } from "@/lib/site";
 
 // Public deployment: the product is not served there (see proxy.ts).
 const SITE_ONLY = process.env.NEXT_PUBLIC_SITE_ONLY === "1";
@@ -75,6 +76,14 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="hidden font-mono text-xs uppercase tracking-[0.1em] text-muted transition-colors hover:text-foreground md:inline"
+          >
+            GitHub
+          </a>
           <Link
             href={SITE_ONLY ? "/get-started" : "/chat"}
             className="inline-flex items-center gap-1.5 rounded bg-accent px-3.5 py-2 font-mono text-xs font-medium uppercase tracking-[0.08em] text-accent-foreground transition-transform hover:-translate-y-px active:scale-95"
@@ -118,6 +127,16 @@ export default function SiteHeader() {
                   </Link>
                 </li>
               ))}
+              <li className="border-b border-border last:border-b-0">
+
+                <a href={REPO_URL} target="_blank" rel="noreferrer" className="block py-4 text-2xl font-semibold tracking-tight">
+
+                  GitHub
+
+                </a>
+
+              </li>
+
             </ul>
           </motion.nav>
         )}

@@ -5,9 +5,7 @@ import SectionNav from "@/components/marketing/SectionNav";
 import CodeBlock from "@/components/marketing/CodeBlock";
 import Checklist from "@/components/marketing/Checklist";
 import Disclosure from "@/components/marketing/Disclosure";
-
-// Set NEXT_PUBLIC_REPO_URL once the repository is public.
-const REPO_URL = process.env.NEXT_PUBLIC_REPO_URL ?? "<repository-url>";
+import { REPO_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Get started",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Tag from "@/components/marketing/Tag";
 import { Rise } from "@/components/marketing/Reveal";
+import { REPO_URL } from "@/lib/site";
 
 const SITE = [
   { href: "/how-it-works", label: "How it works" },
@@ -44,6 +45,11 @@ export default function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-muted transition-colors hover:text-foreground">
+                  GitHub ↗
+                </a>
+              </li>
             </ul>
             <ul className="flex flex-wrap gap-x-6 gap-y-2">
               {APP.map((l) => (

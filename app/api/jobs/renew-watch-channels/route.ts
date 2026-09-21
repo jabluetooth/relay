@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { eq, and } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
+import { verifiedJob } from "@/lib/qstash";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import { findChannelsDueForRenewal, registerOrRenewDriveWatch, registerOrRenewCalendarWatch } from "@/lib/google/watch";
 
@@ -57,6 +57,4 @@ async function handler() {
   return NextResponse.json({ renewed });
 }
 
-export const POST = verifySignatureAppRouter(handler, {
-  url: process.env.APP_BASE_URL ? `${process.env.APP_BASE_URL}/api/jobs/renew-watch-channels` : undefined,
-});
+export const POST = verifiedJob(handler, "/api/jobs/renew-watch-channels");

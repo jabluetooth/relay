@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "./" },
+  openGraph: {
+    type: "website",
+    siteName: "Relay",
+    title: "Relay — cited answers from your own Workspace",
+    description: "Self-hosted, read-only. Every answer links to the exact passage it came from, or Relay refuses.",
+  },
+  twitter: { card: "summary_large_image" },
   title: { default: "Relay — cited answers from your own Workspace", template: "%s · Relay" },
   description:
     "Relay indexes your Drive, Gmail, Calendar and Sheets, then answers questions with a link to the exact passage, or refuses when it can't find one. Self-hosted, read-only.",

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { db, schema } from "@/lib/db";
+import { verifiedJob } from "@/lib/qstash";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import { calendarAdapter } from "@/lib/ingest/calendar";
 import { persistChunks } from "@/lib/ingest/persist";
@@ -57,6 +57,4 @@ async function handler(req: Request) {
   }
 }
 
-export const POST = verifySignatureAppRouter(handler, {
-  url: process.env.APP_BASE_URL ? `${process.env.APP_BASE_URL}/api/jobs/calendar-sync` : undefined,
-});
+export const POST = verifiedJob(handler, "/api/jobs/calendar-sync");

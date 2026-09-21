@@ -1,4 +1,5 @@
 import { Client } from "@upstash/qstash";
+import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 
 // Background-job publisher (README "Known limitations" / former TODO in
 // app/api/ingest/backfill/route.ts): moves ingestion off the synchronous
@@ -19,4 +20,22 @@ export function appBaseUrl(): string {
   const url = process.env.APP_BASE_URL;
   if (!url) throw new Error("APP_BASE_URL is not set — see .env.example");
   return url;
+}
+
+/**
+ * Wraps a job handler so only requests QStash itself signed reach it.
+ * `verifySignatureAppRouter` throws if the signing keys are missing, and
+ * calling it at module scope made every `next build` (which imports each
+ * route) require them, so the public site-only deployment could not build.
+ * Building the verifier on the first request keeps the same protection —
+ * a missing key still fails, closed, on the request — without that.
+ */
+export function verifiedJob(handler: (req: Request) => Promise<Response>, path: string) {
+  let verified: ((req: Request) => Promise<Response>) | null = null;
+  return (req: Request): Promise<Response> => {
+    verified ??= verifySignatureAppRouter(handler, {
+      url: process.env.APP_BASE_URL ? `${process.env.APP_BASE_URL}${path}` : undefined,
+    }) as (req: Request) => Promise<Response>;
+    return verified(req);
+  };
 }

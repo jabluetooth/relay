@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# per-editor AI config stubs (CLAUDE.md / AGENTS.md are the shared ones)
+/.clinerules
+/.cursorrules
+/.windsurfrules

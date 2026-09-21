@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { db, schema } from "@/lib/db";
+import { verifiedJob } from "@/lib/qstash";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import { registerOrRenewDriveWatch, registerOrRenewCalendarWatch } from "@/lib/google/watch";
 import { adapters, type Surface } from "@/lib/ingest";
@@ -104,6 +104,4 @@ async function handler(req: Request) {
 // `url` pins the exact address QStash's signature is checked against;
 // without it the SDK falls back to auto-detecting VERCEL_URL, which doesn't
 // exist outside a Vercel deployment.
-export const POST = verifySignatureAppRouter(handler, {
-  url: process.env.APP_BASE_URL ? `${process.env.APP_BASE_URL}/api/jobs/backfill` : undefined,
-});
+export const POST = verifiedJob(handler, "/api/jobs/backfill");

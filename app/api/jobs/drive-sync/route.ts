@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { db, schema } from "@/lib/db";
+import { verifiedJob } from "@/lib/qstash";
 import { getValidAccessToken } from "@/lib/google/tokens";
 import { driveAdapter } from "@/lib/ingest/drive";
 import { sheetsAdapter } from "@/lib/ingest/sheets";
@@ -95,6 +95,4 @@ async function handler(req: Request) {
   }
 }
 
-export const POST = verifySignatureAppRouter(handler, {
-  url: process.env.APP_BASE_URL ? `${process.env.APP_BASE_URL}/api/jobs/drive-sync` : undefined,
-});
+export const POST = verifiedJob(handler, "/api/jobs/drive-sync");
