@@ -55,7 +55,8 @@
     "build:package": "node scripts/build-package.mjs",
     "test:package": "node scripts/test-package.mjs",
     "prepublishOnly": "npm run build:package",
-    "test": "tsx --test tests/unit/*.test.mts"
+    "test": "tsx --test tests/unit/*.test.mts",
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@upstash/qstash": "^2.11.3",
