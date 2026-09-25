@@ -1,8 +1,32 @@
-# Relay eval harness
+# Relay tests
+
+Two kinds: offline unit tests that run in CI on every push, and an eval harness that measures answer quality against the live app.
+
+## Unit tests
+
+```bash
+npm test            # 146 tests, ~2s, no network, database or Google account needed
+npm run test:coverage
+```
+
+Node's built-in test runner (via `tsx`), with module mocking (`--experimental-test-module-mocks`, Node 22.3+) standing in for Postgres, Qdrant, QStash and the Google clients, and a scripted `fetch` for HuggingFace, Groq and Google's OAuth endpoints. `helpers/fake-db.ts` is a small recording fake of the Drizzle query builder.
+
+| File | Covers |
+|---|---|
+| `security.test.mts` | Request guard (DNS rebinding, CSRF, cross-site embeds), AES-256-GCM token encryption, signed OAuth state, input validation |
+| `utils.test.mts` | Chunking, HTML stripping, retry/backoff, API error parsing, read-only scopes, PKCE, the hand-rolled OAuth requests |
+| `ingest.test.mts` | Gmail, Calendar, Sheets and Drive adapters: MIME parsing, pagination, sync cursors, stale-cursor (404/410) handling, rate-limit retry and partial progress, per-row Sheets facts |
+| `rag-models.test.mts` | Citation extraction (including the model's 【n】 style), Unicode normalisation, prompt construction, reranker and embedding calls |
+| `rag-pipeline.test.mts` | The confidence gate (a weak match never reaches the LLM), top-k selection, citation mapping, query logging; change detection and Qdrant cleanup on re-sync |
+| `routes.test.mts` | Drive/Calendar webhook channel-token auth, `/api/query` validation and persistence, single-flight token refresh |
+
+Writing these found a real bug: `extractBodyText` in `lib/ingest/gmail.ts` returned the stripped HTML part of a message whenever it was listed before the plain-text part, despite being documented to prefer plain text. Fixed, and covered by `ingest.test.mts`.
+
+## Eval harness
 
 Same methodology as Mimo's own eval (PRD §7): measured against the live running app, not a local mock, with results written out as data rather than eyeballed from terminal scrollback.
 
-## Running
+### Running
 
 Requires `npm run dev` already running in another terminal, and at least the Drive surface connected/synced (see the main README).
 
@@ -14,7 +38,7 @@ npm run eval:report        # aggregate whatever result files already exist
 npm run eval:cleanup-adversarial  # remove the seeded adversarial fixtures when done
 ```
 
-## What's measured
+### What's measured
 
 | File | Measures |
 |---|---|
@@ -27,10 +51,10 @@ npm run eval:cleanup-adversarial  # remove the seeded adversarial fixtures when 
 
 `report.mts` aggregates both into one stats table, plus a per-surface breakdown (citation accuracy, full keyword match, average keyword hit rate) now that all four surfaces have real content worth comparing rather than one aggregate number potentially hiding a surface that's actually dragging.
 
-## A real scope limitation, not a shortcut
+### A real scope limitation, not a shortcut
 
 The adversarial fixtures are seeded directly through `persistChunk()` (the same function real ingestion uses for embedding + Qdrant + Postgres writes) rather than through an actual poisoned Google Doc or email, because every OAuth scope this project requests is read-only (`drive.readonly`, `gmail.readonly`, ...) — there's no way to write a real poisoned Doc into Drive or a real poisoned message into Gmail via the API to test either surface's ingestion path end-to-end with malicious content. This exercises the real generation-time defense (FR-14: retrieved content is untrusted data, not instructions) but not the fetch step itself for whichever surface a given case targets. Worth knowing if this ever needs write-scope testing for real.
 
-## Extending to other surfaces
+### Extending to other surfaces
 
 Every `ground-truth.json` entry has a `surface` field, and every `adversarial.json` entry now does too (`seed-adversarial.mts` reads it rather than hardcoding `"drive"`). Drive, Gmail, Calendar, and Sheets all have real entries now — Sheets is the last one still pending an M2 surface (per PRD §9); once it lands, extending this harness the same way is adding more `ground-truth.json` entries with `"surface": "sheets"` and re-running.

@@ -55,7 +55,8 @@
     "build:package": "node scripts/build-package.mjs",
     "test:package": "node scripts/test-package.mjs",
     "prepublishOnly": "npm run build:package",
-    "test": "tsx --test tests/unit/*.test.mts",
+    "test": "tsx --test --experimental-test-module-mocks --no-warnings=ExperimentalWarning tests/unit/*.test.mts",
+    "test:coverage": "tsx --test --experimental-test-module-mocks --no-warnings=ExperimentalWarning --experimental-test-coverage --test-coverage-include=lib/** --test-coverage-include=app/api/** --test-coverage-include=proxy.ts tests/unit/*.test.mts",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
