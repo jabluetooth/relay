@@ -4,6 +4,7 @@ Your work is scattered across Drive, Gmail, Calendar and Sheets, and there is no
 
 [![Website](https://img.shields.io/badge/Website-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://relayby.filheinzrelatorre.com)
 [![npm](https://img.shields.io/npm/v/relay-workspace?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/relay-workspace)
+[![CI](https://github.com/jabluetooth/relay/actions/workflows/ci.yml/badge.svg)](https://github.com/jabluetooth/relay/actions/workflows/ci.yml)
 
 ![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
@@ -118,7 +119,7 @@ Full product spec: [PRD.md](PRD.md).
 git clone https://github.com/jabluetooth/relay.git
 cd relay
 npm install
-npm test                  # unit tests for the security guards, crypto and validation
+npm test                  # 146 offline unit tests, about 2 seconds (see tests/README.md)
 npm run build:package     # builds what the npm package ships
 node bin/relay.mjs        # runs that build, exactly as an installed user would
 ```
@@ -138,6 +139,7 @@ The complete list, with the reasoning behind each, is in the [engineering notes]
 
 ## Changelog
 
+- **Unreleased** - Unit tests grown from the security guards to 146 tests across ingestion, the RAG pipeline, webhooks and the token cache, all offline with Google, Postgres, Qdrant and the model APIs mocked. They found a Gmail bug, now fixed: a message whose HTML part came before its plain-text part was indexed from the stripped HTML instead of the plain text.
 - **1.0.0** - First npm release. One-command install and setup, `relay doctor`, and a local job runner. Locked down to localhost with a request guard and browser security headers. Fixed a fresh-install bug where the database was missing three columns, a data leak through images in model output, and a 210 MB dependency (Google's client) replaced with five small ones. Added unit tests and CI.
 
 ## About the developer

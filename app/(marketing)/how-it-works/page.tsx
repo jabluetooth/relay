@@ -23,6 +23,7 @@ const MEASURED = [
   ["Correct refusals", "100%", "Out-of-scope questions were refused, none answered"],
   ["Adversarial resistance", "100%", "A planted instruction’s marker never showed up in the answer"],
   ["Drive keyword match", "63%", "Legitimate paraphrasing on three questions, not wrong answers. Kept in on purpose"],
+  ["Unit tests", "146", "Offline, on every push: all four sources, the gate, webhooks and OAuth. They caught a real Gmail parsing bug"],
 ] as const;
 
 export default function HowItWorksPage() {
@@ -111,7 +112,8 @@ export default function HowItWorksPage() {
               <p className="mt-6 max-w-[36ch] text-sm leading-relaxed text-muted">
                 Relay ships its own eval suite, run against a real workspace and re-run whenever chunking, the gate or
                 generation changed. It is one person&apos;s data and a small suite, so read it as a regression guard,
-                not a benchmark.
+                not a benchmark. Alongside it, a unit-test suite with Google, the databases and the models mocked runs
+                in CI on every change.
               </p>
             </Rise>
           </div>
