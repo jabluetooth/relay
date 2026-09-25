@@ -105,20 +105,28 @@ function decodeBase64Url(data: string): string {
   return Buffer.from(data, "base64url").toString("utf-8");
 }
 
-/** Depth-first search for a text/plain part; falls back to text/html with tags stripped. */
-function extractBodyText(part: gmail_v1.Schema$MessagePart | undefined): string {
-  if (!part) return "";
-  if (part.mimeType === "text/plain" && part.body?.data) {
-    return decodeBase64Url(part.body.data);
-  }
+/** Depth-first search for the first part of the given MIME type that has a body. */
+function findPartData(part: gmail_v1.Schema$MessagePart | undefined, mimeType: string): string | undefined {
+  if (!part) return undefined;
+  if (part.mimeType === mimeType && part.body?.data) return part.body.data;
   for (const child of part.parts ?? []) {
-    const text = extractBodyText(child);
-    if (text) return text;
+    const data = findPartData(child, mimeType);
+    if (data) return data;
   }
-  if (part.mimeType === "text/html" && part.body?.data) {
-    return stripHtml(decodeBase64Url(part.body.data));
-  }
-  return "";
+  return undefined;
+}
+
+/**
+ * Prefers a text/plain part anywhere in the MIME tree; falls back to
+ * text/html with tags stripped. Two separate searches, not one: a single
+ * pass returned whichever part came first, so a message whose HTML
+ * alternative was listed before its plain one got the stripped HTML.
+ */
+function extractBodyText(part: gmail_v1.Schema$MessagePart | undefined): string {
+  const plain = findPartData(part, "text/plain");
+  if (plain) return decodeBase64Url(plain);
+  const html = findPartData(part, "text/html");
+  return html ? stripHtml(decodeBase64Url(html)) : "";
 }
 
 async function fetchMessageChunk(gmail: gmail_v1.Gmail, messageId: string): Promise<IngestedChunk | null> {
